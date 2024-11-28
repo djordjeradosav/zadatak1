@@ -7,6 +7,28 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+
+
+
+    public function render($request, Throwable $exception)
+{
+    if ($exception instanceof ValidationException) {
+        return response()->json([
+            'success' => false,
+            'errors' => $exception->errors(),
+        ], 422);
+    }
+    if ($exception instanceof ModelNotFoundException) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Resource not found'
+        ], 404);
+    }
+    
+
+    return parent::render($request, $exception);
+}
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
