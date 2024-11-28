@@ -2,16 +2,36 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Models\User;
+use App\Models\Post;
+use App\Models\Comment;
+
+Route::get('/test-relations', function () {
+    // Kreiraj korisnika
+    $user = User::create([
+        'name' => 'John Doe',
+        'email' => 'john@example.com',
+        'password' => bcrypt('password'),
+    ]);
+
+    // Kreiraj post za korisnika
+    $post = $user->posts()->create([
+        'title' => 'Moj prvi post',
+        'content' => 'Ovo je sadržaj posta.',
+    ]);
+
+    // Kreiraj komentar na post
+    $post->comments()->create([
+        'user_id' => $user->id,
+        'content' => 'Ovo je komentar.',
+    ]);
+
+    return 'Relacije testirane uspešno!';
+});
+
+
+
+
 
 Route::get('/', function () {
     return view('welcome');
