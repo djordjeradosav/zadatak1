@@ -1,27 +1,27 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\DeleteController;
-use App\Http\Controllers\UpadreController;
+use App\Http\Controllers\{
+    PostController,
+    DeleteController,
+    UpadreController,
+    CommentController,
+    AuthController
+};
 
-
-use App\Http\Controllers\CommentController;
-
-
-
-
-Route::apiResource('update',UpadreController::class);
-Route::apiResource('delete',DeleteController::class);
-Route::apiResource('posts', PostController::class);
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Auth routes
+Route::post('/dashboard', [AuthController::class, 'dashboard']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+// Protected routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', fn (Request $request) => $request->user());
+    Route::apiResource('posts', PostController::class);
+    Route::apiResource('update', UpadreController::class);
+    Route::apiResource('delete', DeleteController::class);
 });
 
-
-
-Route::get('posts/{post}/comments', [CommentController::class, 'index']); // Lista komentara za post
-Route::post('comments/{comment}/like', [CommentController::class, 'like']); // Lajkovanje komentara
+// Comment routes
+Route::get('posts/{post}/comments', [CommentController::class, 'index']);
+Route::post('comments/{comment}/like', [CommentController::class, 'like']);
